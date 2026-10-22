@@ -9,6 +9,8 @@ import {
   ActivityIndicator,
   Alert,
   StatusBar,
+  Platform,
+  AppState,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -59,6 +61,28 @@ export const DashboardScreen = () => {
     }, [])
   );
 
+  // Automatically re-verify session and data when switching back to the browser tab or mobile app
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      const handleWindowFocus = () => {
+        loadData(true);
+      };
+      window.addEventListener('focus', handleWindowFocus);
+      return () => {
+        window.removeEventListener('focus', handleWindowFocus);
+      };
+    } else {
+      const subscription = AppState.addEventListener('change', (nextAppState) => {
+        if (nextAppState === 'active') {
+          loadData(true);
+        }
+      });
+      return () => {
+        subscription.remove();
+      };
+    }
+  }, []);
+
   const handleRefresh = () => {
     setRefreshing(true);
     loadData(true);
@@ -79,10 +103,20 @@ export const DashboardScreen = () => {
   };
 
   const handleLogout = () => {
-    Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Sign Out', style: 'destructive', onPress: () => logout() },
-    ]);
+    if (Platform.OS === 'web') {
+      // Alert.alert callbacks are not fired by react-native-web polyfill;
+      // use window.confirm on web to ensure logout() is directly executed.
+      // eslint-disable-next-line no-alert
+      const confirmed = window.confirm('Are you sure you want to sign out?');
+      if (confirmed) {
+        logout();
+      }
+    } else {
+      Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign Out', style: 'destructive', onPress: () => logout() },
+      ]);
+    }
   };
 
   return (

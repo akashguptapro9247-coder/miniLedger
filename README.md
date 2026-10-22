@@ -169,19 +169,19 @@ cd backend
 npm test
 ```
 
-**Verified results — 19/19 passing:**
+**Verified results — 20/20 passing:**
 
 ```
  ✓ tests/unit/dateAndOverdue.test.ts   (5 tests)
  ✓ tests/unit/otpService.test.ts       (5 tests)
- ✓ tests/integration/api.test.ts       (9 tests)
+ ✓ tests/integration/api.test.ts      (10 tests)
 
  Test Files  3 passed (3)
-      Tests  19 passed (19)
-   Duration  ~11s
+      Tests  20 passed (20)
+   Duration  ~15s
 ```
 
-Tests cover: health endpoint, OTP lifecycle (generation, expiry, attempt limits, reuse prevention), JWT auth, loan CRUD, tenant isolation, overdue logic, repayment, duplicate-repay prevention, and CORS from a browser origin.
+Tests cover: health endpoint, OTP lifecycle (generation, expiry, attempt limits, reuse prevention), JWT auth, user deletion session invalidation (401), loan CRUD, tenant isolation, overdue logic, repayment, duplicate-repay prevention, and CORS from a browser origin.
 
 ---
 

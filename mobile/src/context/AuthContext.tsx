@@ -33,9 +33,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const isAvailable = await SecureStore.isAvailableAsync();
       if (isAvailable) {
         await SecureStore.setItemAsync(key, value);
-      } else {
-        // Web fallback: use localStorage
-        localStorage.setItem(key, value);
+      } else if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(key, value);
       }
     } catch (e) {
       console.warn('SecureStore set error:', e);
@@ -49,8 +48,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (isAvailable) {
         return await SecureStore.getItemAsync(key);
       }
-      // Web fallback: use localStorage
-      return localStorage.getItem(key);
+      if (typeof window !== 'undefined' && window.localStorage) {
+        return window.localStorage.getItem(key);
+      }
+      return null;
     } catch (e) {
       console.warn('SecureStore get error:', e);
       return null;
@@ -63,9 +64,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const isAvailable = await SecureStore.isAvailableAsync();
       if (isAvailable) {
         await SecureStore.deleteItemAsync(key);
-      } else {
-        // Web fallback: use localStorage
-        localStorage.removeItem(key);
+      } else if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.removeItem(key);
       }
     } catch (e) {
       console.warn('SecureStore delete error:', e);
@@ -73,11 +73,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    await deleteSecureItem(TOKEN_KEY);
-    await deleteSecureItem(USER_KEY);
+    // 1. Immediately reset in-memory state so RootNavigator transitions to LoginScreen
     api.setToken(null);
     setToken(null);
     setUser(null);
+
+    // 2. Clear persisted tokens from storage
+    try {
+      await deleteSecureItem(TOKEN_KEY);
+      await deleteSecureItem(USER_KEY);
+    } catch (e) {
+      console.warn('Error clearing stored credentials:', e);
+    }
   };
 
   useEffect(() => {
