@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿# MiniLedger
 
 A mobile app that helps you track money you lend to friends — record loans, mark them as repaid, and see an instant summary of what you're owed and what's overdue.
@@ -193,3 +194,6 @@ Tests cover: health endpoint, OTP lifecycle (generation, expiry, attempt limits,
 ## Repository
 
 🔗 **[GitHub Repository](<YOUR_GITHUB_REPO_URL_HERE>)**
+=======
+# miniLedger
+>>>>>>> 3802e459d57d66899d8ffcc2107fc40e63a50808
