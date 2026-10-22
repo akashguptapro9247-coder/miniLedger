@@ -285,4 +285,56 @@ describe('MiniLedger Backend API Integration Tests', () => {
     expect(repayRes.body.isRepaid).toBe(true);
     expect(repayRes.body.id).toBe(loanId);
   });
+
+  // Requirement: If a user is deleted from the database, their existing sessions
+  // must be invalidated immediately and all protected requests rejected with 401.
+  it('12. Deleting a user from the database invalidates their JWT session immediately (401)', async () => {
+    const deletedUserPhone = '+919999900099';
+
+    // 1. Generate OTP and authenticate the user
+    otpService.generateOtp(deletedUserPhone);
+    const otp = otpService.getActiveOtpForTesting(deletedUserPhone)!;
+    const verifyRes = await request(app)
+      .post('/auth/verify-otp')
+      .send({ phone: deletedUserPhone, otp });
+    expect(verifyRes.status).toBe(200);
+    const token = verifyRes.body.token;
+    const userId = verifyRes.body.user.id;
+
+    // 2. Verified user can access protected endpoints
+    const initialSummary = await request(app)
+      .get('/loans/summary')
+      .set('Authorization', `Bearer ${token}`);
+    expect(initialSummary.status).toBe(200);
+
+    // 3. User is deleted from the database (simulating Prisma Studio / admin deletion)
+    await prisma.user.delete({ where: { id: userId } });
+
+    // 4. Subsequent GET /loans/summary request with the existing token MUST return 401
+    const summaryAfterDelete = await request(app)
+      .get('/loans/summary')
+      .set('Authorization', `Bearer ${token}`);
+    expect(summaryAfterDelete.status).toBe(401);
+    expect(summaryAfterDelete.body.error).toContain('no longer exists');
+
+    // 5. Subsequent GET /loans request with the existing token MUST return 401
+    const loansAfterDelete = await request(app)
+      .get('/loans')
+      .set('Authorization', `Bearer ${token}`);
+    expect(loansAfterDelete.status).toBe(401);
+    expect(loansAfterDelete.body.error).toContain('no longer exists');
+
+    // 6. Subsequent POST /loans request with the existing token MUST return 401
+    const createAfterDelete = await request(app)
+      .post('/loans')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        friendName: 'Blocked Loan',
+        amount: 500,
+        dueDate: '2026-12-01',
+      });
+    expect(createAfterDelete.status).toBe(401);
+    expect(createAfterDelete.body.error).toContain('no longer exists');
+  });
 });
+
