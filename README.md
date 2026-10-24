@@ -1,7 +1,13 @@
-<<<<<<< HEAD
-﻿# MiniLedger
+# MiniLedger
 
 A mobile app that helps you track money you lend to friends — record loans, mark them as repaid, and see an instant summary of what you're owed and what's overdue.
+
+---
+
+## 🔗 Project Links
+
+- **GitHub Repository**: [View MiniLedger Source Code](https://github.com/akashguptapro9247-coder/miniLedger)
+- **Demo Video & Files**: [Watch the Demo on Google Drive](https://drive.google.com/drive/folders/10KrflcALZUAwXO1_w-wkHp1Ki1onc0JO?usp=sharing)
 
 ---
 
@@ -45,7 +51,7 @@ The project has two parts. Open **two terminal windows** — one for the backend
 ### 1 — Clone and enter the project
 
 ```bash
-git clone <YOUR_GITHUB_REPO_URL>
+git clone https://github.com/akashguptapro9247-coder/miniLedger.git
 cd test_intershala
 ```
 
@@ -185,15 +191,13 @@ Tests cover: health endpoint, OTP lifecycle (generation, expiry, attempt limits,
 
 ---
 
-## Demo Video
+## Demo Video & Files
 
-▶ **[Watch the demo on Loom / Google Drive](<YOUR_DEMO_VIDEO_LINK_HERE>)**
+▶ **[Watch the Demo on Google Drive](https://drive.google.com/drive/folders/10KrflcALZUAwXO1_w-wkHp1Ki1onc0JO?usp=sharing)**
 
 ---
 
 ## Repository
 
-🔗 **[GitHub Repository](<YOUR_GITHUB_REPO_URL_HERE>)**
-=======
-# miniLedger
->>>>>>> 3802e459d57d66899d8ffcc2107fc40e63a50808
+🔗 **[View MiniLedger Source Code](https://github.com/akashguptapro9247-coder/miniLedger)**
+
